@@ -14,4 +14,23 @@ public class TallerContext : DbContext
 
     public DbSet<Mecanico> Mecanicos { get; set; }
     public DbSet<HistorialVehiculo> Historiales { get; set; }
+    public DbSet<Servicio> Servicios { get; set; }
+    public DbSet<VehiculoServicio> VehiculoServicios { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<VehiculoServicio>()
+            .HasOne(vs => vs.Vehiculo)
+            .WithMany()
+            .HasForeignKey(vs => vs.VehiculoId)
+            .OnDelete(DeleteBehavior.Restrict); // Apaga la cascada de Autos
+
+        modelBuilder.Entity<VehiculoServicio>()
+            .HasOne(vs => vs.Servicio)
+            .WithMany()
+            .HasForeignKey(vs => vs.ServicioId)
+            .OnDelete(DeleteBehavior.Restrict); // Apaga la cascada de Servicios
+    }
 }

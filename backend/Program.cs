@@ -205,10 +205,99 @@ app.MapGet("/api/vehiculos/{idVehiculo}/historial", (int idVehiculo, TallerConte
              .ToList();
 }).RequireAuthorization();
 
+// 🚗 GET: Traer UN SOLO vehículo por su ID
+app.MapGet("/api/vehiculos/{id}", (int id, TallerContext db) => {
+    var vehiculo = db.Vehiculos.Find(id);
+    return vehiculo is not null ? Results.Ok(vehiculo) : Results.NotFound();
+}).RequireAuthorization();
+
+
+// 🔄 PUT: Actualizar el Estado del Vehículo
+app.MapPut("/api/vehiculos/{id}/estado", (int id, ActualizarEstadoRequest request, TallerContext db) => {
+    var vehiculo = db.Vehiculos.Find(id);
+    if (vehiculo == null) return Results.NotFound();
+
+    vehiculo.EstadoActual = request.NuevoEstado;
+
+    // MAGIA: Cada vez que cambias el estado, se genera una huella en el historial
+    var nuevoHistorial = new HistorialVehiculo {
+        VehiculoId = id,
+        Descripcion = $"Cambio de estado: El vehículo ahora está {request.NuevoEstado}",
+        FechaHora = DateTime.UtcNow
+    };
+    
+    db.Historiales.Add(nuevoHistorial);
+    db.SaveChanges();
+
+    return Results.Ok(vehiculo);
+}).RequireAuthorization();
+
+// 📝 POST: Agregar Nota Técnica al Historial sin cambiar el estado
+app.MapPost("/api/vehiculos/{id}/notas", (int id, AgregarNotaRequest request, TallerContext db) => {
+    var vehiculo = db.Vehiculos.Find(id);
+    if (vehiculo == null) return Results.NotFound();
+
+    var nuevaNota = new HistorialVehiculo {
+        VehiculoId = id,
+        // Le ponemos un emoji de libretita para distinguirlo en el frontend
+        Descripcion = $"📝 Nota Técnica: {request.Nota}", 
+        FechaHora = DateTime.UtcNow
+    };
+    
+    db.Historiales.Add(nuevaNota);
+    db.SaveChanges();
+    return Results.Ok();
+}).RequireAuthorization();
+
+// ==========================================
+// 7. ENDPOINTS: CATÁLOGO DE SERVICIOS Y ASIGNACIÓN
+// ==========================================
+
+// 📋 POST: Crear un nuevo servicio en el catálogo del taller
+app.MapPost("/api/servicios", (Servicio nuevoServicio, TallerContext db) => {
+    db.Servicios.Add(nuevoServicio);
+    db.SaveChanges();
+    return Results.Ok(nuevoServicio);
+}).RequireAuthorization();
+
+// 📋 GET: Traer todos los servicios disponibles de un taller
+app.MapGet("/api/talleres/{idTaller}/servicios", (int idTaller, TallerContext db) => {
+    return db.Servicios.Where(s => s.TallerId == idTaller).ToList();
+}).RequireAuthorization();
+
+// 🔧 POST: Asignarle un servicio específico a un vehículo (Ej: Ponerle "Cambio de Aceite" al Fiesta)
+app.MapPost("/api/vehiculos/{idVehiculo}/servicios", (int idVehiculo, AsignarServicioRequest req, TallerContext db) => {
+    var nuevoPuente = new VehiculoServicio {
+        VehiculoId = idVehiculo,
+        ServicioId = req.ServicioId
+    };
+    db.VehiculoServicios.Add(nuevoPuente);
+    db.SaveChanges();
+    return Results.Ok();
+}).RequireAuthorization();
+
+// 🔧 GET: Ver qué servicios necesita un vehículo y si ya están terminados
+app.MapGet("/api/vehiculos/{idVehiculo}/servicios", (int idVehiculo, TallerContext db) => {
+    return db.VehiculoServicios
+             .Include(vs => vs.Servicio) // Le pedimos a SQL que traiga el Nombre y Precio también
+             .Where(vs => vs.VehiculoId == idVehiculo)
+             .Select(vs => new {
+                 vs.Id,
+                 vs.Terminado,
+                 ServicioNombre = vs.Servicio!.Nombre,
+                 ServicioPrecio = vs.Servicio.Precio,
+                 TiempoEstimado = vs.Servicio.TiempoEstimadoMinutos
+             })
+             .ToList();
+}).RequireAuthorization();
+
 app.Run();
 
 // ==========================================
 // 6. DTOs (Data Transfer Objects) - Moldes temporales para recibir datos de internet
 // ==========================================
+public record ActualizarEstadoRequest(string NuevoEstado);
 public record RegistroRequest(string Nombre, string Correo, string Password, int TallerId);
 public record LoginRequest(string Correo, string Password);
+public record AgregarNotaRequest(string Nota);
+public record AsignarServicioRequest(int ServicioId);

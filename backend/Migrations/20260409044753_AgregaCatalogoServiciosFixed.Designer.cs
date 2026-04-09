@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TallerSaaS.Data;
 
@@ -11,9 +12,11 @@ using TallerSaaS.Data;
 namespace TallerSaaS.Migrations
 {
     [DbContext(typeof(TallerContext))]
-    partial class TallerContextModelSnapshot : ModelSnapshot
+    [Migration("20260409044753_AgregaCatalogoServiciosFixed")]
+    partial class AgregaCatalogoServiciosFixed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
