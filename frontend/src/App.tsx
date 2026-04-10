@@ -33,6 +33,7 @@ import Vehiculos from "./pages/Vehiculos";
 import NuevoIngreso from "./pages/NuevoIngreso";
 import Login from "./pages/Login"; // ⬅️ Nuevo Login limpio
 import DetalleVehiculo from "./pages/DetalleVehiculo";
+import Servicios from "./pages/Servicios";
 
 // ==========================================
 // 1. EL ESQUELETO (SIDEBAR COLAPSABLE, HEADER Y MODAL)
@@ -142,7 +143,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       {/* 🟢 CONTENIDO PRINCIPAL */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* HEADER TOP DEGRADADO */}
-        <header className="bg-gradient-to-r from-rose-600 to-fuchsia-800 border-b border-fuchsia-900/50 sticky top-0 z-40 shadow-md">
+        <header className="bg-gradient-to-r from-rose-600 to-[#520444] border-b border-fuchsia-900/50 sticky top-0 z-40 shadow-md">
           <div className="px-8 py-4 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white capitalize drop-shadow-sm">
               {location.pathname === "/"
@@ -265,10 +266,7 @@ export default function App() {
             path="/historial"
             element={<PaginaEnConstruccion titulo="Historial Global" />}
           />
-          <Route
-            path="/servicios"
-            element={<PaginaEnConstruccion titulo="Servicios" />}
-          />
+          <Route path="/servicios" element={<Servicios token={token} />} />
 
           <Route
             path="/vehiculo/:id"
