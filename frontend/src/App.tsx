@@ -34,6 +34,7 @@ import Login from "./pages/Login"; // ⬅️ Nuevo Login limpio
 import DetalleVehiculo from "./pages/DetalleVehiculo";
 import Servicios from "./pages/Servicios";
 import RastreoCliente from "./pages/RastreoCliente";
+import Inventario from "./pages/Inventario";
 
 // ==========================================
 // 1. EL ESQUELETO (SIDEBAR COLAPSABLE, HEADER Y MODAL)
@@ -278,13 +279,15 @@ export default function App() {
                 />
 
                 {/* Rutas en planeación */}
-                <Route
-                  path="/inventario"
-                  element={<PaginaEnConstruccion titulo="Inventario" />}
-                />
+
                 <Route
                   path="/historial"
                   element={<PaginaEnConstruccion titulo="Historial Global" />}
+                />
+
+                <Route
+                  path="/inventario"
+                  element={<Inventario token={token} />}
                 />
 
                 <Route path="*" element={<Navigate to="/" />} />

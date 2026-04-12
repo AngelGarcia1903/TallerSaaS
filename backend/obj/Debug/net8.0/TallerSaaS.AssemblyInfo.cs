@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TallerSaaS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49b1ad54cd6c519024c3d702c1b141954765b80d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6afc180488e13272cc95a8b361f6c319de340381")]
 [assembly: System.Reflection.AssemblyProductAttribute("TallerSaaS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TallerSaaS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -291,6 +291,34 @@ app.MapGet("/api/vehiculos/{idVehiculo}/servicios", (int idVehiculo, TallerConte
              .ToList();
 }).RequireAuthorization();
 
+
+// ==========================================
+// 8. ENDPOINTS: INVENTARIO
+// ==========================================
+
+// Traer Categorías
+app.MapGet("/api/talleres/{idTaller}/categorias", (int idTaller, TallerContext db) => {
+    return db.CategoriasInventario.Where(c => c.TallerId == idTaller).ToList();
+}).RequireAuthorization();
+
+// Crear Categoría
+app.MapPost("/api/categorias", (CategoriaInventario cat, TallerContext db) => {
+    db.CategoriasInventario.Add(cat); db.SaveChanges(); return Results.Ok(cat);
+}).RequireAuthorization();
+
+// Traer Productos (con su categoría incluida)
+app.MapGet("/api/talleres/{idTaller}/productos", (int idTaller, TallerContext db) => {
+    return db.Productos.Include(p => p.Categoria)
+               .Where(p => p.TallerId == idTaller)
+               .OrderByDescending(p => p.UltimoSurtido).ToList();
+}).RequireAuthorization();
+
+// Crear Producto
+app.MapPost("/api/productos", (Producto prod, TallerContext db) => {
+    prod.UltimoSurtido = DateTime.UtcNow; // Se sella la fecha automáticamente como pediste
+    db.Productos.Add(prod); db.SaveChanges(); return Results.Ok(prod);
+}).RequireAuthorization();
+
 // 🌍 ENDPOINT PÚBLICO: Rastreo para el cliente final (Sin Token JWT)
 app.MapGet("/api/publico/rastreo/{placa}", (string placa, TallerContext db) => {
     // Buscamos el vehículo por placa e incluimos los datos del taller
