@@ -23,7 +23,6 @@ import {
   ChevronRight,
   Package,
   Archive,
-  ClipboardList,
   Wrench,
 } from "lucide-react";
 
@@ -34,6 +33,7 @@ import NuevoIngreso from "./pages/NuevoIngreso";
 import Login from "./pages/Login"; // ⬅️ Nuevo Login limpio
 import DetalleVehiculo from "./pages/DetalleVehiculo";
 import Servicios from "./pages/Servicios";
+import RastreoCliente from "./pages/RastreoCliente";
 
 // ==========================================
 // 1. EL ESQUELETO (SIDEBAR COLAPSABLE, HEADER Y MODAL)
@@ -245,39 +245,54 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard vehiculos={vehiculos} />} />
-          <Route
-            path="/vehiculos"
-            element={<Vehiculos vehiculos={vehiculos} />}
-          />
-          <Route
-            path="/nuevo"
-            element={<NuevoIngreso token={token} recargar={cargarVehiculos} />}
-          />
+      <Routes>
+        {/* 🌍 1. RUTA PÚBLICA (Afuera del Layout para que no tenga menú lateral) */}
+        <Route path="/rastreo/:placa" element={<RastreoCliente />} />
 
-          {/* Rutas en planeación */}
-          <Route
-            path="/inventario"
-            element={<PaginaEnConstruccion titulo="Inventario" />}
-          />
-          <Route
-            path="/historial"
-            element={<PaginaEnConstruccion titulo="Historial Global" />}
-          />
-          <Route path="/servicios" element={<Servicios token={token} />} />
+        {/* 🔐 2. RUTAS DE ADMINISTRADOR (Envueltas en el Layout) */}
+        <Route
+          path="*"
+          element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard vehiculos={vehiculos} />} />
+                <Route
+                  path="/vehiculos"
+                  element={<Vehiculos vehiculos={vehiculos} />}
+                />
+                <Route
+                  path="/nuevo"
+                  element={
+                    <NuevoIngreso token={token} recargar={cargarVehiculos} />
+                  }
+                />
+                <Route
+                  path="/servicios"
+                  element={<Servicios token={token} />}
+                />
+                <Route
+                  path="/vehiculo/:id"
+                  element={
+                    <DetalleVehiculo token={token} recargar={cargarVehiculos} />
+                  }
+                />
 
-          <Route
-            path="/vehiculo/:id"
-            element={
-              <DetalleVehiculo token={token} recargar={cargarVehiculos} />
-            }
-          />
+                {/* Rutas en planeación */}
+                <Route
+                  path="/inventario"
+                  element={<PaginaEnConstruccion titulo="Inventario" />}
+                />
+                <Route
+                  path="/historial"
+                  element={<PaginaEnConstruccion titulo="Historial Global" />}
+                />
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </Layout>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

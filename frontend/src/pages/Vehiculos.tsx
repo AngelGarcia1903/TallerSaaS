@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"; // ⬅️ 1. IMPORTAMOS LINK
 interface Vehiculo {
   id: number;
   placa: string;
+  marca: string;
   modelo: string;
   problemaReportado: string;
   estadoActual: string;
@@ -46,6 +47,12 @@ export default function Vehiculos({ vehiculos }: { vehiculos: Vehiculo[] }) {
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wide">
                     {auto.placa}
                   </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
+                    {auto.marca}{" "}
+                    <span className="font-medium opacity-70">
+                      {auto.modelo}
+                    </span>
+                  </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     {auto.modelo}
                   </p>

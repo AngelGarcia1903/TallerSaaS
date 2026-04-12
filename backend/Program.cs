@@ -291,6 +291,34 @@ app.MapGet("/api/vehiculos/{idVehiculo}/servicios", (int idVehiculo, TallerConte
              .ToList();
 }).RequireAuthorization();
 
+// 🌍 ENDPOINT PÚBLICO: Rastreo para el cliente final (Sin Token JWT)
+app.MapGet("/api/publico/rastreo/{placa}", (string placa, TallerContext db) => {
+    // Buscamos el vehículo por placa e incluimos los datos del taller
+    var vehiculo = db.Vehiculos
+                     .Include(v => v.Taller)
+                     .FirstOrDefault(v => v.Placa == placa);
+
+    if (vehiculo == null) return Results.NotFound();
+
+    // También traemos su historial de notas y estados
+    var historial = db.Historiales
+                      .Where(h => h.VehiculoId == vehiculo.Id)
+                      .OrderByDescending(h => h.FechaHora)
+                      .ToList();
+
+    return Results.Ok(new {
+        Vehiculo = new {
+            vehiculo.Placa,
+            vehiculo.Marca,
+            vehiculo.Modelo,
+            vehiculo.EstadoActual,
+            TallerNombre = vehiculo.Taller?.Nombre,
+            TallerDireccion = "Av. Principal #123, Irapuato" // Aquí podrías usar datos reales del taller
+        },
+        Historial = historial
+    });
+}).AllowAnonymous(); // ⬅️ CRUCIAL: Esto permite el acceso público
+
 app.Run();
 
 // ==========================================

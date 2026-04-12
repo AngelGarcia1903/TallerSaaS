@@ -9,6 +9,7 @@ interface Props {
 
 export default function NuevoIngreso({ token, recargar }: Props) {
   const [placa, setPlaca] = useState("");
+  const [marca, setMarca] = useState("");
   const [modelo, setModelo] = useState("");
   const [problema, setProblema] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -28,6 +29,7 @@ export default function NuevoIngreso({ token, recargar }: Props) {
         },
         body: JSON.stringify({
           placa,
+          marca,
           modelo,
           problemaReportado: problema,
           tallerId: 1,
@@ -55,6 +57,7 @@ export default function NuevoIngreso({ token, recargar }: Props) {
       </h2>
 
       <form onSubmit={registrarAuto} className="space-y-5">
+        {/* Placa */}
         <div>
           <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
             Placa
@@ -69,6 +72,22 @@ export default function NuevoIngreso({ token, recargar }: Props) {
           />
         </div>
 
+        {/* Marca */}
+        <div>
+          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+            Marca
+          </label>
+          <input
+            type="text"
+            value={marca}
+            onChange={(e) => setMarca(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:ring-2 focus:ring-rose-500 text-gray-900 dark:text-white"
+            placeholder="Ej. Nissan, Honda, Ford..."
+          />
+        </div>
+
+        {/* Modelo */}
         <div>
           <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
             Modelo
@@ -83,6 +102,7 @@ export default function NuevoIngreso({ token, recargar }: Props) {
           />
         </div>
 
+        {/* Problema Reportado */}
         <div>
           <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
             Problema Reportado
@@ -97,6 +117,7 @@ export default function NuevoIngreso({ token, recargar }: Props) {
           />
         </div>
 
+        {/*Boton de guardar*/}
         <button
           type="submit"
           disabled={cargando}

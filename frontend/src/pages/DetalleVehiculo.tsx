@@ -192,6 +192,10 @@ export default function DetalleVehiculo({ token, recargar }: Props) {
             <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
               {vehiculo.placa}
             </h2>
+            <p className="text-gray-500 dark:text-gray-400 font-bold text-lg mb-4">
+              {vehiculo.marca}{" "}
+              <span className="font-medium opacity-60">{vehiculo.modelo}</span>
+            </p>
             <p className="text-gray-500 dark:text-gray-400 font-medium mb-4">
               {vehiculo.modelo}
             </p>
