@@ -296,57 +296,48 @@ app.MapGet("/api/vehiculos/{idVehiculo}/servicios", (int idVehiculo, TallerConte
 // 8. ENDPOINTS: INVENTARIO
 // ==========================================
 
-// Traer Categorías
+// 📋 Traer Categorías (Con autogeneración por defecto)
 app.MapGet("/api/talleres/{idTaller}/categorias", (int idTaller, TallerContext db) => {
-    return db.CategoriasInventario.Where(c => c.TallerId == idTaller).ToList();
+    var categorias = db.CategoriasInventario.Where(c => c.TallerId == idTaller).ToList();
+    
+    // Si no hay categorías, inyectamos las de tu diseño por defecto
+    if (!categorias.Any()) {
+        categorias = new List<CategoriaInventario> {
+            new CategoriaInventario { Nombre = "Aceites y Lubricantes", ColorHex = "#e11d48", TallerId = idTaller },
+            new CategoriaInventario { Nombre = "Filtros", ColorHex = "#ea580c", TallerId = idTaller },
+            new CategoriaInventario { Nombre = "Frenos", ColorHex = "#db2777", TallerId = idTaller },
+            new CategoriaInventario { Nombre = "Baterías", ColorHex = "#ca8a04", TallerId = idTaller }
+        };
+        db.CategoriasInventario.AddRange(categorias);
+        db.SaveChanges();
+    }
+    return categorias;
 }).RequireAuthorization();
 
-// Crear Categoría
+// 📋 Crear Categoría
 app.MapPost("/api/categorias", (CategoriaInventario cat, TallerContext db) => {
     db.CategoriasInventario.Add(cat); db.SaveChanges(); return Results.Ok(cat);
 }).RequireAuthorization();
 
-// Traer Productos (con su categoría incluida)
-app.MapGet("/api/talleres/{idTaller}/productos", (int idTaller, TallerContext db) => {
-    return db.Productos.Include(p => p.Categoria)
-               .Where(p => p.TallerId == idTaller)
-               .OrderByDescending(p => p.UltimoSurtido).ToList();
+// ✏️ Modificar Categoría
+app.MapPut("/api/categorias/{id}", (int id, CategoriaInventario actualizada, TallerContext db) => {
+    var cat = db.CategoriasInventario.Find(id);
+    if (cat == null) return Results.NotFound();
+    cat.Nombre = actualizada.Nombre;
+    db.SaveChanges();
+    return Results.Ok(cat);
 }).RequireAuthorization();
 
-// Crear Producto
-app.MapPost("/api/productos", (Producto prod, TallerContext db) => {
-    prod.UltimoSurtido = DateTime.UtcNow; // Se sella la fecha automáticamente como pediste
-    db.Productos.Add(prod); db.SaveChanges(); return Results.Ok(prod);
+// 🗑️ Eliminar Categoría
+app.MapDelete("/api/categorias/{id}", (int id, TallerContext db) => {
+    var cat = db.CategoriasInventario.Find(id);
+    if (cat == null) return Results.NotFound();
+    db.CategoriasInventario.Remove(cat);
+    db.SaveChanges();
+    return Results.Ok();
 }).RequireAuthorization();
 
-// 🌍 ENDPOINT PÚBLICO: Rastreo para el cliente final (Sin Token JWT)
-app.MapGet("/api/publico/rastreo/{placa}", (string placa, TallerContext db) => {
-    // Buscamos el vehículo por placa e incluimos los datos del taller
-    var vehiculo = db.Vehiculos
-                     .Include(v => v.Taller)
-                     .FirstOrDefault(v => v.Placa == placa);
-
-    if (vehiculo == null) return Results.NotFound();
-
-    // También traemos su historial de notas y estados
-    var historial = db.Historiales
-                      .Where(h => h.VehiculoId == vehiculo.Id)
-                      .OrderByDescending(h => h.FechaHora)
-                      .ToList();
-
-    return Results.Ok(new {
-        Vehiculo = new {
-            vehiculo.Placa,
-            vehiculo.Marca,
-            vehiculo.Modelo,
-            vehiculo.EstadoActual,
-            TallerNombre = vehiculo.Taller?.Nombre,
-            TallerDireccion = "Av. Principal #123, Irapuato" // Aquí podrías usar datos reales del taller
-        },
-        Historial = historial
-    });
-}).AllowAnonymous(); // ⬅️ CRUCIAL: Esto permite el acceso público
-
+// (Mantén tus rutas de Productos tal como están abajo de esto...)
 app.Run();
 
 // ==========================================
