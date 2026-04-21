@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom"; // ⬅️ La magia para que el modal cubra toda la pantalla
+import { createPortal } from "react-dom";
 import {
   Package,
   Search,
   PlusCircle,
   AlertTriangle,
-  Filter,
   Edit3,
   Trash2,
   X,
@@ -37,19 +36,14 @@ interface Categoria {
 export default function Inventario({ token }: { token: string }) {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-
-  // Pestañas (Tabs)
   const [pestaña, setPestaña] = useState<"Productos" | "Categorias">(
     "Productos",
   );
-
-  // Filtros
   const [busqueda, setBusqueda] = useState("");
   const [catSeleccionada, setCatSeleccionada] = useState<number | "Todas">(
     "Todas",
   );
 
-  // Estados de Modales
   const [modalCat, setModalCat] = useState<{
     visible: boolean;
     modo: "Crear" | "Editar";
@@ -59,7 +53,6 @@ export default function Inventario({ token }: { token: string }) {
   const [mostrarModalProd, setMostrarModalProd] = useState(false);
   const [cargando, setCargando] = useState(false);
 
-  // Formulario Producto
   const [formProd, setFormProd] = useState({
     nombre: "",
     marca: "",
@@ -93,7 +86,6 @@ export default function Inventario({ token }: { token: string }) {
     cargarDatos();
   }, []);
 
-  // 💾 LÓGICA DE CATEGORÍAS (CRUD Completo)
   const guardarCategoria = async (e: React.FormEvent) => {
     e.preventDefault();
     setCargando(true);
@@ -140,7 +132,6 @@ export default function Inventario({ token }: { token: string }) {
     }
   };
 
-  // 💾 LÓGICA DE PRODUCTOS
   const guardarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
     setCargando(true);
@@ -183,7 +174,6 @@ export default function Inventario({ token }: { token: string }) {
     }
   };
 
-  // Métricas
   const productosBajosStock = productos.filter(
     (p) => p.stockActual <= p.stockMinimo,
   );
@@ -193,7 +183,6 @@ export default function Inventario({ token }: { token: string }) {
   );
   const unidadesTotal = productos.reduce((acc, p) => acc + p.stockActual, 0);
 
-  // Filtrado de grid
   const productosFiltrados = productos.filter((p) => {
     const coincideBusqueda =
       p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -207,69 +196,80 @@ export default function Inventario({ token }: { token: string }) {
     <div className="max-w-7xl mx-auto space-y-8 font-sans">
       {/* 📊 KPI DASHBOARD SUPERIOR */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-[#1e2230] p-5 rounded-2xl border border-gray-800 shadow-lg">
-          <p className="text-gray-400 text-sm mb-2">Total Productos</p>
+        <div className="bg-white dark:bg-[#1e2230] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-lg transition-colors">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
+            Total Productos
+          </p>
           <div className="flex justify-between items-center">
-            <h3 className="text-3xl font-bold text-white">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
               {productos.length}
             </h3>
-            <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center text-white">
+            <div className="w-10 h-10 bg-rose-100 dark:bg-rose-600 rounded-xl flex items-center justify-center text-rose-600 dark:text-white">
               <Package size={20} />
             </div>
           </div>
-          <p className="text-xs text-emerald-400 mt-2">En el catálogo</p>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 font-medium">
+            En el catálogo
+          </p>
         </div>
-        <div className="bg-[#1e2230] p-5 rounded-2xl border border-gray-800 shadow-lg">
-          <p className="text-gray-400 text-sm mb-2">Valor Total (Costo)</p>
+        <div className="bg-white dark:bg-[#1e2230] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-lg transition-colors">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
+            Valor Total (Costo)
+          </p>
           <div className="flex justify-between items-center">
-            <h3 className="text-3xl font-bold text-white">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
               ${valorTotal.toLocaleString()}
             </h3>
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-500 rounded-xl flex items-center justify-center text-emerald-600 dark:text-white">
               <DollarSign size={20} />
             </div>
           </div>
         </div>
-        <div className="bg-[#1e2230] p-5 rounded-2xl border border-gray-800 shadow-lg">
-          <p className="text-gray-400 text-sm mb-2">Unidades Totales</p>
+        <div className="bg-white dark:bg-[#1e2230] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-lg transition-colors">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
+            Unidades Totales
+          </p>
           <div className="flex justify-between items-center">
-            <h3 className="text-3xl font-bold text-white">{unidadesTotal}</h3>
-            <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
+              {unidadesTotal}
+            </h3>
+            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-500 rounded-xl flex items-center justify-center text-orange-600 dark:text-white">
               <TrendingUp size={20} />
             </div>
           </div>
         </div>
-        <div className="bg-[#1e2230] p-5 rounded-2xl border border-gray-800 shadow-lg relative overflow-hidden">
-          {/* Brillo rojo para advertencia */}
+        <div className="bg-white dark:bg-[#1e2230] p-5 rounded-2xl border border-rose-200 dark:border-gray-800 shadow-sm dark:shadow-lg relative overflow-hidden transition-colors">
           {productosBajosStock.length > 0 && (
-            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-600 blur-[50px] opacity-20"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500 blur-[50px] opacity-10 dark:opacity-20"></div>
           )}
-          <p className="text-gray-400 text-sm mb-2 relative z-10">Stock Bajo</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-2 relative z-10">
+            Stock Bajo
+          </p>
           <div className="flex justify-between items-center relative z-10">
-            <h3 className="text-3xl font-bold text-white">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
               {productosBajosStock.length}
             </h3>
-            <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center text-white animate-pulse">
+            <div className="w-10 h-10 bg-rose-100 dark:bg-rose-600 rounded-xl flex items-center justify-center text-rose-600 dark:text-white animate-pulse">
               <AlertTriangle size={20} />
             </div>
           </div>
-          <p className="text-xs text-rose-400 mt-2 relative z-10">
+          <p className="text-xs text-rose-600 dark:text-rose-400 mt-2 relative z-10 font-medium">
             Requieren atención
           </p>
         </div>
       </div>
 
       {/* PESTAÑAS (TABS) */}
-      <div className="inline-flex bg-[#1a1d27] p-1 rounded-xl border border-gray-800">
+      <div className="inline-flex bg-gray-200/50 dark:bg-[#1a1d27] p-1 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors">
         <button
           onClick={() => setPestaña("Productos")}
-          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition ${pestaña === "Productos" ? "bg-[#2a2f3e] text-white shadow" : "text-gray-400 hover:text-white"}`}
+          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition ${pestaña === "Productos" ? "bg-white text-gray-900 shadow dark:bg-[#2a2f3e] dark:text-white" : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"}`}
         >
           Productos
         </button>
         <button
           onClick={() => setPestaña("Categorias")}
-          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition ${pestaña === "Categorias" ? "bg-[#2a2f3e] text-white shadow" : "text-gray-400 hover:text-white"}`}
+          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition ${pestaña === "Categorias" ? "bg-white text-gray-900 shadow dark:bg-[#2a2f3e] dark:text-white" : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"}`}
         >
           Categorías
         </button>
@@ -278,12 +278,12 @@ export default function Inventario({ token }: { token: string }) {
       {/* VISTA 1: CATEGORÍAS */}
       {pestaña === "Categorias" && (
         <div className="space-y-6">
-          <div className="bg-[#1a1d27] p-6 rounded-2xl border border-gray-800 flex justify-between items-center">
+          <div className="bg-white dark:bg-[#1a1d27] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 flex justify-between items-center transition-colors">
             <div>
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 Gestión de Categorías
               </h3>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Organiza tu inventario en categorías personalizadas.
               </p>
             </div>
@@ -291,7 +291,7 @@ export default function Inventario({ token }: { token: string }) {
               onClick={() =>
                 setModalCat({ visible: true, modo: "Crear", nombre: "" })
               }
-              className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition"
+              className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg shadow-rose-600/20"
             >
               <PlusCircle size={18} /> Nueva Categoría
             </button>
@@ -300,11 +300,11 @@ export default function Inventario({ token }: { token: string }) {
             {categorias.map((cat) => (
               <div
                 key={cat.id}
-                className="bg-[#1a1d27] p-6 rounded-2xl border border-gray-800 hover:border-gray-600 transition group flex flex-col justify-between min-h-[140px]"
+                className="bg-white dark:bg-[#1a1d27] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition shadow-sm group flex flex-col justify-between min-h-[140px]"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-800/50"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-800/50"
                     style={{ color: cat.colorHex }}
                   >
                     <Package size={24} />
@@ -319,20 +319,22 @@ export default function Inventario({ token }: { token: string }) {
                           nombre: cat.nombre,
                         })
                       }
-                      className="text-blue-400 hover:bg-blue-400/10 p-2 rounded-lg"
+                      className="text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-400/10 p-2 rounded-lg transition"
                     >
                       <Edit3 size={16} />
                     </button>
                     <button
                       onClick={() => eliminarCategoria(cat.id)}
-                      className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg"
+                      className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 p-2 rounded-lg transition"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-white">{cat.nombre}</h4>
-                <p className="text-xs text-gray-500 mt-1">
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {cat.nombre}
+                </h4>
+                <p className="text-xs text-gray-500 mt-1 font-medium">
                   {productos.filter((p) => p.categoriaId === cat.id).length}{" "}
                   productos vinculados
                 </p>
@@ -345,8 +347,7 @@ export default function Inventario({ token }: { token: string }) {
       {/* VISTA 2: PRODUCTOS */}
       {pestaña === "Productos" && (
         <div className="space-y-6">
-          {/* BARRA DE BÚSQUEDA Y FILTROS */}
-          <div className="bg-[#1a1d27] p-4 rounded-2xl border border-gray-800 flex flex-col md:flex-row gap-4">
+          <div className="bg-white dark:bg-[#1a1d27] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 flex flex-col md:flex-row gap-4 transition-colors shadow-sm">
             <div className="relative flex-1">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -357,7 +358,7 @@ export default function Inventario({ token }: { token: string }) {
                 placeholder="Buscar productos por nombre..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white text-sm transition-colors"
               />
             </div>
             <select
@@ -369,7 +370,7 @@ export default function Inventario({ token }: { token: string }) {
                     : parseInt(e.target.value),
                 )
               }
-              className="bg-[#0f111a] border border-gray-800 text-white px-4 py-3 rounded-xl outline-none text-sm min-w-[200px]"
+              className="bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-xl outline-none text-sm min-w-[200px] transition-colors"
             >
               <option value="Todas">Toda las Categorías</option>
               {categorias.map((c) => (
@@ -386,17 +387,16 @@ export default function Inventario({ token }: { token: string }) {
             </button>
           </div>
 
-          {/* BANNER DE ALERTA (SOLO SI HAY STOCK BAJO) */}
           {productosBajosStock.length > 0 && (
-            <div className="bg-rose-950/30 border border-rose-900/50 p-4 rounded-2xl flex items-center gap-4">
-              <div className="text-rose-500 bg-rose-500/10 p-3 rounded-xl">
+            <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-4 rounded-2xl flex items-center gap-4 transition-colors">
+              <div className="text-rose-600 dark:text-rose-500 bg-rose-100 dark:bg-rose-500/10 p-3 rounded-xl">
                 <AlertTriangle size={24} />
               </div>
               <div>
-                <h4 className="text-rose-500 font-bold text-lg">
+                <h4 className="text-rose-700 dark:text-rose-500 font-bold text-lg">
                   {productosBajosStock.length} productos con stock bajo
                 </h4>
-                <p className="text-rose-300/70 text-sm">
+                <p className="text-rose-600/80 dark:text-rose-300/70 text-sm font-medium">
                   Considera reabastecer estos productos pronto para no retrasar
                   los servicios.
                 </p>
@@ -404,7 +404,6 @@ export default function Inventario({ token }: { token: string }) {
             </div>
           )}
 
-          {/* GRID DE PRODUCTOS (DISEÑO FIGMA) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {productosFiltrados.map((p) => {
               const porcentaje = Math.min(
@@ -412,58 +411,57 @@ export default function Inventario({ token }: { token: string }) {
                 100,
               );
               const alerta = p.stockActual <= p.stockMinimo;
-
-              // Generamos un código falso visual usando el ID
               const codigoFalso = `COD-${p.id.toString().padStart(4, "0")}`;
 
               return (
                 <div
                   key={p.id}
-                  className="bg-[#1a1d27] rounded-2xl border border-gray-800 p-6 hover:border-gray-600 transition flex flex-col justify-between h-full"
+                  className="bg-white dark:bg-[#1a1d27] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition shadow-sm hover:shadow-md flex flex-col justify-between h-full"
                 >
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                       {p.nombre}
                     </h3>
-                    <p className="text-gray-500 text-xs mb-4">
+                    <p className="text-gray-500 text-xs mb-4 font-medium">
                       Código: {codigoFalso}
                     </p>
 
                     <div className="flex justify-between items-center mb-6">
-                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-gray-800 text-gray-300">
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-transparent">
                         {categorias.find((c) => c.id === p.categoriaId)
                           ?.nombre || "Sin Categoría"}
                       </span>
-                      <span className="text-lg font-black text-white">
+                      <span className="text-lg font-black text-gray-900 dark:text-white">
                         ${p.precioVenta.toFixed(2)}
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-400 mb-6">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                       Proveedor:{" "}
-                      <span className="text-white font-medium">
+                      <span className="text-gray-900 dark:text-white font-bold">
                         {p.proveedor}
                       </span>
                     </p>
                   </div>
 
-                  {/* BARRA DE PROGRESO DE STOCK */}
                   <div className="mt-auto">
                     <div className="flex justify-between items-end mb-2">
-                      <p className="text-sm text-gray-400">Stock disponible</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Stock disponible
+                      </p>
                       <p
-                        className={`font-bold ${alerta ? "text-rose-500" : "text-emerald-500"}`}
+                        className={`font-bold ${alerta ? "text-rose-600 dark:text-rose-500" : "text-emerald-600 dark:text-emerald-500"}`}
                       >
                         {p.stockActual} unidades
                       </p>
                     </div>
-                    <div className="w-full bg-gray-800 rounded-full h-2 mb-2">
+                    <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 mb-2 overflow-hidden border border-gray-200 dark:border-transparent">
                       <div
-                        className={`h-2 rounded-full transition-all ${alerta ? "bg-rose-500" : "bg-emerald-500"}`}
+                        className={`h-full rounded-full transition-all ${alerta ? "bg-rose-500" : "bg-emerald-500"}`}
                         style={{ width: `${porcentaje}%` }}
                       ></div>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 font-medium">
                       Mínimo: {p.stockMinimo} unidades
                     </p>
                   </div>
@@ -474,16 +472,13 @@ export default function Inventario({ token }: { token: string }) {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* 🔴 PORTAL PARA MODALES (Cubre el 100% de la pantalla) */}
-      {/* ========================================================= */}
-
+      {/* 🔴 PORTAL PARA MODALES */}
       {modalCat.visible &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div className="bg-[#1a1d27] rounded-3xl p-6 w-full max-w-sm border border-gray-800 shadow-2xl">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gray-900/40 dark:bg-black/70 backdrop-blur-sm transition-opacity">
+            <div className="bg-white dark:bg-[#1a1d27] rounded-3xl p-6 w-full max-w-sm border border-gray-200 dark:border-gray-800 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   {modalCat.modo === "Crear"
                     ? "Nueva Categoría"
                     : "Editar Categoría"}
@@ -492,14 +487,14 @@ export default function Inventario({ token }: { token: string }) {
                   onClick={() =>
                     setModalCat({ visible: false, modo: "Crear", nombre: "" })
                   }
-                  className="text-gray-400 hover:text-rose-500"
+                  className="text-gray-400 hover:text-rose-500 bg-gray-100 dark:bg-[#0f111a] p-1.5 rounded-lg transition"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
               </div>
               <form onSubmit={guardarCategoria} className="space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">
                     Nombre
                   </label>
                   <input
@@ -510,13 +505,13 @@ export default function Inventario({ token }: { token: string }) {
                     }
                     required
                     placeholder="Ej. Llantas, Filtros..."
-                    className="w-full px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                   />
                 </div>
                 <button
                   disabled={cargando || !modalCat.nombre.trim()}
                   type="submit"
-                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl disabled:opacity-50 transition"
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl disabled:opacity-50 transition shadow-lg shadow-rose-600/20"
                 >
                   {cargando ? "Guardando..." : "Guardar"}
                 </button>
@@ -528,22 +523,22 @@ export default function Inventario({ token }: { token: string }) {
 
       {mostrarModalProd &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div className="bg-[#1a1d27] rounded-3xl p-8 w-full max-w-3xl border border-gray-800 shadow-2xl overflow-y-auto max-h-[90vh]">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gray-900/40 dark:bg-black/70 backdrop-blur-sm transition-opacity">
+            <div className="bg-white dark:bg-[#1a1d27] rounded-3xl p-8 w-full max-w-3xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-y-auto max-h-[90vh]">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <Package className="text-rose-500" /> Registrar Producto
                 </h3>
                 <button
                   onClick={() => setMostrarModalProd(false)}
-                  className="text-gray-400 hover:text-rose-500"
+                  className="text-gray-400 hover:text-rose-500 bg-gray-100 dark:bg-[#0f111a] p-2 rounded-xl transition"
                 >
                   <X size={24} />
                 </button>
               </div>
 
               {categorias.length === 0 ? (
-                <div className="bg-orange-500/10 border border-orange-500/30 text-orange-400 p-4 rounded-xl text-center font-medium">
+                <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 p-4 rounded-xl text-center font-medium">
                   ⚠️ Ve a la pestaña de Categorías y crea al menos una antes de
                   agregar productos.
                 </div>
@@ -551,7 +546,7 @@ export default function Inventario({ token }: { token: string }) {
                 <form onSubmit={guardarProducto} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="text-xs font-bold text-gray-400 uppercase">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                         Nombre
                       </label>
                       <input
@@ -561,12 +556,12 @@ export default function Inventario({ token }: { token: string }) {
                         onChange={(e) =>
                           setFormProd({ ...formProd, nombre: e.target.value })
                         }
-                        className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                        className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                         placeholder="Ej. Aceite Sintético 5W-30"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-400 uppercase">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                         Categoría
                       </label>
                       <select
@@ -578,7 +573,7 @@ export default function Inventario({ token }: { token: string }) {
                             categoriaId: e.target.value,
                           })
                         }
-                        className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                        className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                       >
                         <option value="">Seleccionar...</option>
                         {categorias.map((c) => (
@@ -589,7 +584,7 @@ export default function Inventario({ token }: { token: string }) {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-400 uppercase">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                         Proveedor
                       </label>
                       <input
@@ -602,12 +597,12 @@ export default function Inventario({ token }: { token: string }) {
                             proveedor: e.target.value,
                           })
                         }
-                        className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                        className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                         placeholder="Ej. AutoZone"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-400 uppercase">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                         Costo de Compra ($)
                       </label>
                       <input
@@ -621,12 +616,12 @@ export default function Inventario({ token }: { token: string }) {
                             costoCompra: e.target.value,
                           })
                         }
-                        className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                        className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                         placeholder="0.00"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-400 uppercase">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                         Precio de Venta ($)
                       </label>
                       <input
@@ -640,13 +635,13 @@ export default function Inventario({ token }: { token: string }) {
                             precioVenta: e.target.value,
                           })
                         }
-                        className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                        className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                         placeholder="0.00"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                           Stock Actual
                         </label>
                         <input
@@ -659,12 +654,12 @@ export default function Inventario({ token }: { token: string }) {
                               stockActual: e.target.value,
                             })
                           }
-                          className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                          className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                           placeholder="10"
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                           Alerta (Mínimo)
                         </label>
                         <input
@@ -677,7 +672,7 @@ export default function Inventario({ token }: { token: string }) {
                               stockMinimo: e.target.value,
                             })
                           }
-                          className="w-full mt-1.5 px-4 py-3 bg-[#0f111a] border border-gray-800 rounded-xl outline-none focus:border-rose-500 text-white"
+                          className="w-full mt-1.5 px-4 py-3 bg-gray-50 dark:bg-[#0f111a] border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-gray-900 dark:text-white transition-colors"
                           placeholder="3"
                         />
                       </div>
@@ -686,7 +681,7 @@ export default function Inventario({ token }: { token: string }) {
                   <button
                     disabled={cargando}
                     type="submit"
-                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-xl disabled:opacity-50 transition mt-4"
+                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-xl disabled:opacity-50 transition mt-4 shadow-lg shadow-rose-600/20"
                   >
                     Guardar Producto
                   </button>
