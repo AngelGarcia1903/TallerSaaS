@@ -80,7 +80,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         className={`bg-white dark:bg-[#1a1d27] border-r border-gray-200 dark:border-gray-800 hidden md:flex flex-col transition-all duration-300 ${colapsado ? "w-20" : "w-64"}`}
       >
         <div
-          className={`p-6 flex items-center border-b border-gray-200 dark:border-gray-800 ${colapsado ? "justify-center" : "gap-3 justify-between"}`}
+          className={`h-20 p-6 flex items-center border-b border-gray-200 dark:border-gray-800 ${colapsado ? "justify-center" : "gap-3 justify-between"}`}
         >
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-rose-600 to-fuchsia-800 p-2 rounded-xl text-white shadow-lg shadow-rose-600/20 shrink-0">
@@ -144,7 +144,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       {/* 🟢 CONTENIDO PRINCIPAL */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* HEADER TOP DEGRADADO */}
-        <header className="bg-gradient-to-r from-rose-600 to-[#520444] border-b border-fuchsia-900/50 sticky top-0 z-40 shadow-md">
+        <header className="h-20 bg-gradient-to-r from-rose-600 to-[#520444] border-b border-fuchsia-900/50 sticky top-0 z-40 shadow-md">
           <div className="px-8 py-4 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white capitalize drop-shadow-sm">
               {location.pathname === "/"

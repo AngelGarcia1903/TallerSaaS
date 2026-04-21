@@ -5,7 +5,6 @@ import {
   PlusCircle,
   AlertTriangle,
   Calendar,
-  Filter,
   Image as ImageIcon,
   TrendingUp,
   ArrowDown,
